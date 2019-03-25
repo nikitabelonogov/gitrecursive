@@ -7,21 +7,22 @@ NC=$'\033[0m'
 
 set -ue
 
-repositories_path=$(find ${PWD} -type directory -name '.git')
-
 function exec_command() {
   local prefix=$1
   local cmd=$2
-  echo -e "${prefix}\n$( ${cmd} )"
+  local stdout=$($cmd)
+  echo -e "${prefix}\n${stdout}"
 }
+
+repositories_path=$(find ${PWD} -type directory -name '.git')
 
 for repo_git_path in $repositories_path; do
   repo_path=${repo_git_path%/*}
   repo_name=${repo_path##*/}
-  repo_dir=${repo_path%/*}
-  colored_path="${FC}${repo_dir}/${SC}${repo_name}${NC}"
-  cmd="git -C ${repo_path} ${@#*git}"
-  exec_command ${colored_path} "$cmd" &
+  colored_path=${repo_path/${PWD}/${FC}${PWD}${NC}}
+  colored_path=${colored_path/${repo_name}/${SC}${repo_name}${NC}}
+  gitcmd=${@#*git}
+  exec_command "${colored_path} ${gitcmd}" "git -C ${repo_path} ${gitcmd}" &
 done
 
 wait < <(jobs -p)
