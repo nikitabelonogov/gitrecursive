@@ -11,7 +11,7 @@ for repo_git_path in $(find ${PWD} -type directory -name '.git'); do
   repo_name=${repo_path##*/}
   colored_path=${repo_path/${PWD}/${FC}${PWD}${NC}}
   colored_path=${colored_path/${repo_name}/${SC}${repo_name}${NC}}
-  echo -e "${colored_path} $@\n$(git -C ${repo_path} $@)" &
+  echo -e "${colored_path} $*\n$(git -C ${repo_path} $*)" &
 done
 
 wait
